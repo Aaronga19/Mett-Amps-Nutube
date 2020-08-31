@@ -31,7 +31,7 @@ void setup()
   delay(100);
   monControle.begin();  
   monControle.setChannel(115); 
-  monControle.setPALevel(RF24_PA_HIGH);
+  monControle.setPALevel(RF24_PA_MIN);
   monControle.setDataRate( RF24_250KBPS ) ; 
   monControle.openWritingPipe( addresses[0]);
 }

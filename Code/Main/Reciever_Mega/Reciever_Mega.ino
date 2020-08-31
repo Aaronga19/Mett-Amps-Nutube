@@ -30,7 +30,7 @@ void setup()
   pantalla.begin(16,2);
   myAmp.begin(); 
   myAmp.setChannel(115); 
-  myAmp.setPALevel(RF24_PA_HIGH);
+  myAmp.setPALevel(RF24_PA_MIN);
   myAmp.setDataRate( RF24_250KBPS ) ; 
   myAmp.openReadingPipe(1, addresses[0]);
   myAmp.startListening();
