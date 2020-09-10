@@ -10,6 +10,9 @@ LiquidCrystal pantalla(44,45,42,43,40,41); // Conexión: RS,E,D4,D5,D6,D7
 RF24 myAmp (48, 49); // Conexión: (CE,CSN) SCK->52, MOSI->51, MISO->50
 byte addresses[][6] = {"0"}; 
 
+int Li = 16;
+int Lii = 0;
+
 
 struct package
 {
@@ -28,6 +31,7 @@ void setup()
   Serial.begin(115200);
   delay(100);
   pantalla.begin(16,2);
+  pantalla.clear();
   myAmp.begin(); 
   myAmp.setChannel(115); 
   myAmp.setPALevel(RF24_PA_MIN);
@@ -92,9 +96,30 @@ void loop()
     Serial.println(data.bas);
     Serial.println(data.text);
   }
-  /*else
-  pantalla.setCursor(1,0);
-  pantalla.print("Controller off");
-  pantalla.setCursor(1,1);
-  pantalla.print("Please turn on");*/
+                            // Si el control esta apagado
+  else {
+    pantalla.clear();
+    pantalla.setCursor(0,0);
+    pantalla.print("Control Off");
+    pantalla.setCursor(0,1);
+    pantalla.print(Scroll_LCD_Left("Por favor enciendalo o verifique la conexion"));
+    delay(250);
+  }
+}
+
+String Scroll_LCD_Left(String StrDisplay){
+  String result;
+  String StrProcess = "                 " + StrDisplay + "                 ";
+  result = StrProcess.substring(Li,Lii);
+  Li++;
+  Lii++;
+  if (Li > StrProcess.length()){
+    Li=16;
+    Lii = 0;
+  }
+  return result;
+}
+void Clear_Scroll_LCD_Rigth(){
+  Li=16;
+  Lii=0;
 }
