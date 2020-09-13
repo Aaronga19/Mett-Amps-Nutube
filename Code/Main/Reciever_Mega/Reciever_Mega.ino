@@ -15,10 +15,11 @@ int Lii = 0;
 
 int mode = 0;
 
-int analogVolume = 0;
-int analogTripler = 0;
-int analogMilie = 0;
-int analogBas = 0;
+
+int analogTripler = A10;
+int analogMilieu = A9;
+int analogBas = A8;
+int analogVolume = A11;
 
 struct package
 {
@@ -34,7 +35,7 @@ Package data;
 
 void setup() 
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(100);
   pinMode(6,INPUT);
   pantalla.begin(16,2);
@@ -52,7 +53,7 @@ void loop()
 {
   mode = digitalRead(6);
   Serial.print(mode);
-  
+                                // Cuando se coloca en modo inalambrico
   if (mode == HIGH){
     WirelessMode();
     
@@ -83,7 +84,7 @@ void loop()
         pantalla.setCursor(3,1);
         pantalla.print(bajos);
         PotBas.set(bajos);
-                                 // Organización de lcd para Middle
+                                // Organización de lcd para Middle
         int medios = map(data.milieu,0, 1023, 0, 100);                       
         pantalla.setCursor(5,1);
         pantalla.print("Me");
@@ -91,7 +92,7 @@ void loop()
         pantalla.print(medios);
         PotMilieu.set(medios);
     
-                                 // Organización de lcd para Bass
+                                // Organización de lcd para Bass
         int agudos = map(data.tripler,0, 1023, 0, 100);   
         pantalla.setCursor(10,1);
         pantalla.print("Agu");
@@ -115,24 +116,69 @@ void loop()
                                 // Si el control esta apagado
       else {
         pantalla.clear();
-        pantalla.setCursor(1,0);
-        pantalla.print("<Control Off>");
+        pantalla.setCursor(0,0);
+        pantalla.print("**Control Off**");
         pantalla.setCursor(0,1);
         pantalla.print(Scroll_LCD_Left("Por favor enciendalo o verifique la conexion"));
         delay(250);
       }
     }
   }
+                                // Cuando se coloca en modo Manual
     if (mode == LOW){
       ManualMode();
+      pantalla.clear();
       while(mode == LOW){
+        analogVolume = analogRead(A11);
+        Serial.print("Analogico: ");
+        Serial.println(analogVolume);  
+                                // Modificar el volumen con potenciometro
+        int volumen = map(analogVolume,0, 1022, 0, 100);
         pantalla.clear();
-        pantalla.setCursor(0,0);
+        pantalla.setCursor(2,0);
+        pantalla.print("Volumen: ");
+        pantalla.setCursor(12,0);
+        pantalla.print(volumen);
+        PotVol.set(volumen);
+
+        analogBas = analogRead(A8);
+        
+        int bajos = map(analogBas,0, 1022, 0, 100);
+        pantalla.setCursor(0,1);
+        pantalla.print("Ba ");
+        pantalla.setCursor(3,1);
+        pantalla.print(bajos);
+        PotBas.set(bajos);
+
+        analogMilieu = analogRead(A9);
+
+        int medios = map(analogMilieu,0, 1022, 0, 100);                       
+        pantalla.setCursor(5,1);
+        pantalla.print("Me");
+        pantalla.setCursor(8,1);
+        pantalla.print(medios);
+        PotMilieu.set(medios);
+
+        analogTripler = analogRead(A10);  
+                                // Modificar el volumen con potenciometro
+        int agudos = map(analogTripler,0, 1022, 0, 100);
+        
+        pantalla.setCursor(10,1);
+        pantalla.print("Agu");
+        pantalla.setCursor(14,1);
+        pantalla.print(agudos);
+        PotTripler.set(agudos);
+        
+        Serial.print("Mapeado: ");
+        Serial.println(agudos);
+   
+        
+        /*pantalla.clear();
+        pantalla.setCursor(0,1);
         pantalla.print(Scroll_LCD_Left("Estamos en el while"));
-        delay(250);
+        delay(250); */
         }
     }
-  
 }
 
 String Scroll_LCD_Left(String StrDisplay){
@@ -147,10 +193,12 @@ String Scroll_LCD_Left(String StrDisplay){
   }
   return result;
 }
+
 void Clear_Scroll_LCD_Rigth(){
   Li=16;
   Lii=0;
 }
+
 void ManualMode(){
   pantalla.clear();
   pantalla.setCursor(1,0);
@@ -159,6 +207,7 @@ void ManualMode(){
   pantalla.print("Manual");
   delay(3000);
   }
+  
 void WirelessMode(){
   pantalla.clear();
     pantalla.setCursor(1,0);
