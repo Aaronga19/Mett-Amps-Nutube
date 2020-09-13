@@ -13,6 +13,12 @@ byte addresses[][6] = {"0"};
 int Li = 16;
 int Lii = 0;
 
+int mode = 0;
+
+int analogVolume = 0;
+int analogTripler = 0;
+int analogMilie = 0;
+int analogBas = 0;
 
 struct package
 {
@@ -30,6 +36,7 @@ void setup()
 {
   Serial.begin(115200);
   delay(100);
+  pinMode(6,INPUT);
   pantalla.begin(16,2);
   pantalla.clear();
   myAmp.begin(); 
@@ -38,73 +45,94 @@ void setup()
   myAmp.setDataRate( RF24_250KBPS ) ; 
   myAmp.openReadingPipe(1, addresses[0]);
   myAmp.startListening();
+ 
 }
 
 void loop()  
 {
-  if ( myAmp.available()) 
-  {
-    while (myAmp.available())
-    {
-      myAmp.read(&data, sizeof(data));
-    }
-    pantalla.clear();
-    pantalla.setCursor(0,0);
-    pantalla.print("Pack");
-    pantalla.setCursor(5,0);
-    pantalla.print(data.id);
-                            //Organizacion de lcd para Volume
-    int volumen = map(data.volume,0, 1023, 0, 100);
-    pantalla.setCursor(10,0);
-    pantalla.print("Vol ");
-    pantalla.setCursor(14,0);
-    pantalla.print(volumen);
-    PotVol.set(volumen);
-                            // Organización de lcd para Treble
-    int bajos = map(data.bas,0, 1023, 0, 100);
-    pantalla.setCursor(0,1);
-    pantalla.print("Ba ");
-    pantalla.setCursor(3,1);
-    pantalla.print(bajos);
-    PotBas.set(bajos);
-                             // Organización de lcd para Middle
-    int medios = map(data.milieu,0, 1023, 0, 100);                       
-    pantalla.setCursor(5,1);
-    pantalla.print("Me");
-    pantalla.setCursor(8,1);
-    pantalla.print(medios);
-    PotMilieu.set(medios);
+  mode = digitalRead(6);
+  delay(300);
+  Serial.print(mode);
+  if (mode == HIGH){
+    
+    WirelessMode();
+    while (mode == HIGH){
 
-                             // Organización de lcd para Bass
-    int agudos = map(data.tripler,0, 1023, 0, 100);   
-    pantalla.setCursor(10,1);
-    pantalla.print("Agu");
-    pantalla.setCursor(14,1);
-    pantalla.print(agudos);
-    PotTripler.set(agudos);
-                            // Monitoreo por puerto serial
-    Serial.print("\nPackage:");
-    Serial.print(data.id);
-    Serial.print("\n");
-    Serial.print("Volumen: ");
-    Serial.println(data.volume);
-    Serial.print("Treb: ");
-    Serial.println(data.tripler);
-    Serial.print("Mid: ");
-    Serial.println(data.milieu);
-    Serial.print("Bass: ");
-    Serial.println(data.bas);
-    Serial.println(data.text);
+      if ( myAmp.available()) 
+      {
+        while (myAmp.available())
+        {
+          myAmp.read(&data, sizeof(data));
+        }
+        pantalla.clear();
+        pantalla.setCursor(0,0);
+        pantalla.print("Pack");
+        pantalla.setCursor(5,0);
+        pantalla.print(data.id);
+                                //Organizacion de lcd para Volume
+        int volumen = map(data.volume,0, 1023, 0, 100);
+        pantalla.setCursor(10,0);
+        pantalla.print("Vol ");
+        pantalla.setCursor(14,0);
+        pantalla.print(volumen);
+        PotVol.set(volumen);
+                                // Organización de lcd para Treble
+        int bajos = map(data.bas,0, 1023, 0, 100);
+        pantalla.setCursor(0,1);
+        pantalla.print("Ba ");
+        pantalla.setCursor(3,1);
+        pantalla.print(bajos);
+        PotBas.set(bajos);
+                                 // Organización de lcd para Middle
+        int medios = map(data.milieu,0, 1023, 0, 100);                       
+        pantalla.setCursor(5,1);
+        pantalla.print("Me");
+        pantalla.setCursor(8,1);
+        pantalla.print(medios);
+        PotMilieu.set(medios);
+    
+                                 // Organización de lcd para Bass
+        int agudos = map(data.tripler,0, 1023, 0, 100);   
+        pantalla.setCursor(10,1);
+        pantalla.print("Agu");
+        pantalla.setCursor(14,1);
+        pantalla.print(agudos);
+        PotTripler.set(agudos);
+                                // Monitoreo por puerto serial
+        Serial.print("\nPackage:");
+        Serial.print(data.id);
+        Serial.print("\n");
+        Serial.print("Volumen: ");
+        Serial.println(data.volume);
+        Serial.print("Treb: ");
+        Serial.println(data.tripler);
+        Serial.print("Mid: ");
+        Serial.println(data.milieu);
+        Serial.print("Bass: ");
+        Serial.println(data.bas);
+        Serial.println(data.text);
+      }
+                                // Si el control esta apagado
+      else {
+        pantalla.clear();
+        pantalla.setCursor(1,0);
+        pantalla.print("<Control Off>");
+        pantalla.setCursor(0,1);
+        pantalla.print(Scroll_LCD_Left("Por favor enciendalo o verifique la conexion"));
+        delay(250);
+      }
+    }
   }
-                            // Si el control esta apagado
-  else {
-    pantalla.clear();
-    pantalla.setCursor(0,0);
-    pantalla.print("Control Off");
-    pantalla.setCursor(0,1);
-    pantalla.print(Scroll_LCD_Left("Por favor enciendalo o verifique la conexion"));
-    delay(250);
-  }
+    if (mode == LOW){
+      ManualMode();
+      while(mode == LOW){
+        pantalla.clear();
+        pantalla.setCursor(0,0);
+        pantalla.print(Scroll_LCD_Left("Estamos en el while"));
+        delay(250);
+        }
+    }
+  
 }
 
 String Scroll_LCD_Left(String StrDisplay){
@@ -123,3 +151,19 @@ void Clear_Scroll_LCD_Rigth(){
   Li=16;
   Lii=0;
 }
+void ManualMode(){
+  pantalla.clear();
+  pantalla.setCursor(1,0);
+  pantalla.print("Modo:"),
+  pantalla.setCursor(7,1);
+  pantalla.print("Manual");
+  delay(3000);
+  }
+void WirelessMode(){
+  pantalla.clear();
+    pantalla.setCursor(1,0);
+    pantalla.print("Mode:"),
+    pantalla.setCursor(6,1);
+    pantalla.print("Wireless");
+    delay(3000);
+  }
