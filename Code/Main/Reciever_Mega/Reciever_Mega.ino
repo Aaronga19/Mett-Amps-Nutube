@@ -56,7 +56,7 @@ void loop()
                                 // Cuando se coloca en modo inalambrico
   if (mode == HIGH){
     WirelessMode();
-    
+                                // En caso de que el control este prendido
     while (mode == HIGH){
 
       if ( myAmp.available()) 
