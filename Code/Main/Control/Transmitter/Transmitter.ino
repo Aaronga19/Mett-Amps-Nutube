@@ -31,18 +31,11 @@ void setup()
   delay(100);
   monControle.begin();  
   monControle.setChannel(115); 
-  monControle.setPALevel(RF24_PA_HIGH);
+  monControle.setPALevel(RF24_PA_MIN);
   monControle.setDataRate( RF24_250KBPS ) ; 
   monControle.openWritingPipe( addresses[0]);
 }
-void lirePot(){
-  data.volume = analogRead(potmeterPin1); // Lee el dato y el resultado lo manda directo al paquete de envío
-  data.tripler = analogRead(potmeterPin2);
-  data.milieu = analogRead(potmeterPin3);
-  data.bas = analogRead(potmeterPin4);
-  //Serial.print(potmeterVal);
-  //Serial.print("\n");
-}
+
 void loop()
 {
   lirePot();
@@ -62,6 +55,15 @@ void loop()
   data.id = data.id + 1;;
   delay(100);
 } 
+
+void lirePot(){
+  data.volume = analogRead(potmeterPin1); // Lee el dato y el resultado lo manda directo al paquete de envío
+  data.tripler = analogRead(potmeterPin2);
+  data.milieu = analogRead(potmeterPin3);
+  data.bas = analogRead(potmeterPin4);
+  //Serial.print(potmeterVal);
+  //Serial.print("\n");
+}
 
 
  
