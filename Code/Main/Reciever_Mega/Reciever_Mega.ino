@@ -51,14 +51,14 @@ void setup()
 
 void loop()  
 {
-  mode = digitalRead(6);
-  Serial.print(mode);
+  ReadMode(500);
                                 // Cuando se coloca en modo inalambrico
-  if (mode == HIGH){
-    WirelessMode();
-                                // En caso de que el control este prendido
+  while (mode == HIGH){
+    if (mode == HIGH){
+          WirelessMode();
+    }                           // En caso de que el control este prendido
     while (mode == HIGH){
-
+      ReadMode(1);
       if ( myAmp.available()) 
       {
         while (myAmp.available())
@@ -100,6 +100,7 @@ void loop()
         pantalla.print(agudos);
         PotTripler.set(agudos);
                                 // Monitoreo por puerto serial
+                                /*
         Serial.print("\nPackage:");
         Serial.print(data.id);
         Serial.print("\n");
@@ -111,7 +112,7 @@ void loop()
         Serial.println(data.milieu);
         Serial.print("Bass: ");
         Serial.println(data.bas);
-        Serial.println(data.text);
+        Serial.println(data.text);*/
       }
                                 // Si el control esta apagado
       else {
@@ -125,13 +126,15 @@ void loop()
     }
   }
                                 // Cuando se coloca en modo Manual
-    if (mode == LOW){
-      ManualMode();
+    while (mode == LOW){
+      if (mode == LOW){
+          ManualMode();
+        }
       pantalla.clear();
       while(mode == LOW){
+        ReadMode(1);
         analogVolume = analogRead(A11);
-        Serial.print("Analogico: ");
-        Serial.println(analogVolume);  
+        delay(50);
                                 // Modificar el volumen con potenciometro
         int volumen = map(analogVolume,0, 1022, 0, 100);
         pantalla.clear();
@@ -169,8 +172,7 @@ void loop()
         pantalla.print(agudos);
         PotTripler.set(agudos);
         
-        Serial.print("Mapeado: ");
-        Serial.println(agudos);
+        
    
         
         /*pantalla.clear();
@@ -179,6 +181,7 @@ void loop()
         delay(250); */
         }
     }
+    
 }
 
 String Scroll_LCD_Left(String StrDisplay){
@@ -216,3 +219,10 @@ void WirelessMode(){
     pantalla.print("Wireless");
     delay(3000);
   }
+
+void ReadMode(int timedelay){
+  mode = digitalRead(6);
+  Serial.print("Mode: ");
+  Serial.println(mode);
+  delay(timedelay);
+}
