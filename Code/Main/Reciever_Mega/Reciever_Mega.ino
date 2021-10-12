@@ -56,25 +56,31 @@ void loop()
   while (mode == HIGH){
     if (mode == HIGH){
           WirelessMode();
+          ControlOff();
     }                           // En caso de que el control este prendido
     while (mode == HIGH){
       ReadMode(1);
-      if ( myAmp.available()) 
-      {
-        while (myAmp.available())
-        {
-          myAmp.read(&data, sizeof(data));
-        }
+      /*
+      while(myAmp.available()==false) {
+          Serial.print("My amp: ");
+          Serial.println(myAmp.available());
+          pantalla.clear();
+          pantalla.setCursor(0,0);
+          pantalla.print("**Control Off**");
+          pantalla.setCursor(0,1);
+          pantalla.print(Scroll_LCD_Left("Turn on or verify the connection"));
+          delay(250);
+      }*/
+      
+      while (myAmp.available()){
         pantalla.clear();
-        pantalla.setCursor(0,0);
-        pantalla.print("Pack");
-        pantalla.setCursor(5,0);
-        pantalla.print(data.id);
+        myAmp.read(&data, sizeof(data));
+
                                 //Organizacion de lcd para Volume
         int volumen = map(data.volume,0, 1023, 0, 100);
-        pantalla.setCursor(10,0);
-        pantalla.print("Vol ");
-        pantalla.setCursor(14,0);
+        pantalla.setCursor(2,0);
+        pantalla.print("Volumen: ");
+        pantalla.setCursor(12,0);
         pantalla.print(volumen);
         PotVol.set(volumen);
                                 // Organización de lcd para Treble
@@ -99,32 +105,35 @@ void loop()
         pantalla.setCursor(14,1);
         pantalla.print(agudos);
         PotTripler.set(agudos);
+
+        if(myAmp.available()==false)
+          {
+            ControlOff();
+          }
+        
+       }
+       
+       
                                 // Monitoreo por puerto serial
                                 /*
-        Serial.print("\nPackage:");
-        Serial.print(data.id);
-        Serial.print("\n");
-        Serial.print("Volumen: ");
-        Serial.println(data.volume);
-        Serial.print("Treb: ");
-        Serial.println(data.tripler);
-        Serial.print("Mid: ");
-        Serial.println(data.milieu);
-        Serial.print("Bass: ");
-        Serial.println(data.bas);
-        Serial.println(data.text);*/
-      }
-                                // Si el control esta apagado
-      else {
-        pantalla.clear();
-        pantalla.setCursor(0,0);
-        pantalla.print("**Control Off**");
-        pantalla.setCursor(0,1);
-        pantalla.print(Scroll_LCD_Left("Por favor enciendalo o verifique la conexion"));
-        delay(250);
-      }
-    }
+       Serial.print("\nPackage:");
+       Serial.print(data.id);
+       Serial.print("\n");
+       Serial.print("Volumen: ");
+       Serial.println(data.volume);
+       Serial.print("Treb: ");
+       Serial.println(data.tripler);
+       Serial.print("Mid: ");
+       Serial.println(data.milieu);
+       Serial.print("Bass: ");
+       Serial.println(data.bas);
+       Serial.println(data.text);*/
+    }                          // Si el control esta apagado
+      
   }
+
+  /*=============================================================*/
+  
                                 // Cuando se coloca en modo Manual
     while (mode == LOW){
       if (mode == LOW){
@@ -222,7 +231,24 @@ void WirelessMode(){
 
 void ReadMode(int timedelay){
   mode = digitalRead(6);
-  Serial.print("Mode: ");
-  Serial.println(mode);
   delay(timedelay);
+}
+
+void ControlOff(){
+  Serial.print("My amp: ");
+  Serial.println(myAmp.available());
+  int timelimit = 0;
+  /*for( int i=0; i<=44; i++){
+    pantalla.clear();
+    pantalla.setCursor(0,0);
+    pantalla.print("**Control Off**");
+    pantalla.setCursor(0,1);
+    pantalla.print(Scroll_LCD_Left("Turn on or verify the connection"));
+    delay(250);
+  }*/
+  pantalla.clear();
+  pantalla.setCursor(0,0);
+  pantalla.print("**Control Off**");
+  pantalla.setCursor(3,1);
+  pantalla.print("Turn it on");
 }
