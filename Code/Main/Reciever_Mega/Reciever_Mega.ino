@@ -36,7 +36,6 @@ Package data;
 void setup() 
 {
   Serial.begin(9600);
-  delay(100);
   pinMode(6,INPUT);
   pantalla.begin(16,2);
   pantalla.clear();
@@ -60,7 +59,7 @@ void loop()
     }                           // En caso de que el control este prendido
     while (mode == HIGH){
       ReadMode(1);
-      /*
+      
       while(myAmp.available()==false) {
           Serial.print("My amp: ");
           Serial.println(myAmp.available());
@@ -70,7 +69,7 @@ void loop()
           pantalla.setCursor(0,1);
           pantalla.print(Scroll_LCD_Left("Turn on or verify the connection"));
           delay(250);
-      }*/
+      }
       
       while (myAmp.available()){
         pantalla.clear();
@@ -106,29 +105,8 @@ void loop()
         pantalla.print(agudos);
         PotTripler.set(agudos);
 
-        if(myAmp.available()==false)
-          {
-            ControlOff();
-          }
-        
        }
-       
-       
-                                // Monitoreo por puerto serial
-                                /*
-       Serial.print("\nPackage:");
-       Serial.print(data.id);
-       Serial.print("\n");
-       Serial.print("Volumen: ");
-       Serial.println(data.volume);
-       Serial.print("Treb: ");
-       Serial.println(data.tripler);
-       Serial.print("Mid: ");
-       Serial.println(data.milieu);
-       Serial.print("Bass: ");
-       Serial.println(data.bas);
-       Serial.println(data.text);*/
-    }                          // Si el control esta apagado
+    }                          
       
   }
 
@@ -153,8 +131,7 @@ void loop()
         pantalla.print(volumen);
         PotVol.set(volumen);
 
-        analogBas = analogRead(A8);
-        
+        analogBas = analogRead(A8);    
         int bajos = map(analogBas,0, 1022, 0, 100);
         pantalla.setCursor(0,1);
         pantalla.print("Ba ");
@@ -163,7 +140,6 @@ void loop()
         PotBas.set(bajos);
 
         analogMilieu = analogRead(A9);
-
         int medios = map(analogMilieu,0, 1022, 0, 100);                       
         pantalla.setCursor(5,1);
         pantalla.print("Me");
@@ -172,22 +148,12 @@ void loop()
         PotMilieu.set(medios);
 
         analogTripler = analogRead(A10);  
-                                // Modificar el volumen con potenciometro
         int agudos = map(analogTripler,0, 1022, 0, 100);
-        
         pantalla.setCursor(10,1);
         pantalla.print("Agu");
         pantalla.setCursor(14,1);
         pantalla.print(agudos);
-        PotTripler.set(agudos);
-        
-        
-   
-        
-        /*pantalla.clear();
-        pantalla.setCursor(0,1);
-        pantalla.print(Scroll_LCD_Left("Estamos en el while"));
-        delay(250); */
+        PotTripler.set(agudos); 
         }
     }
     
@@ -238,14 +204,6 @@ void ControlOff(){
   Serial.print("My amp: ");
   Serial.println(myAmp.available());
   int timelimit = 0;
-  /*for( int i=0; i<=44; i++){
-    pantalla.clear();
-    pantalla.setCursor(0,0);
-    pantalla.print("**Control Off**");
-    pantalla.setCursor(0,1);
-    pantalla.print(Scroll_LCD_Left("Turn on or verify the connection"));
-    delay(250);
-  }*/
   pantalla.clear();
   pantalla.setCursor(0,0);
   pantalla.print("**Control Off**");
