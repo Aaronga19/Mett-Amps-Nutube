@@ -3,11 +3,11 @@
 #include <DigiPotX9Cxxx.h>
 
 DigiPot PotVol(2,A0,A1); // INC, U/D, CS
-DigiPot PotBas(3,A2,A3); // INC, U/D, CS
-DigiPot PotMilieu(4,A4,A5); // INC, U/D, CS
-DigiPot PotTripler(5,A6,A7); // INC, U/D, CS
-LiquidCrystal pantalla(44,45,42,43,40,41); // Conexión: RS,E,D4,D5,D6,D7 
-RF24 myAmp (48, 49); // Conexión: (CE,CSN) SCK->52, MOSI->51, MISO->50
+DigiPot PotBass(3,A2,A3); // INC, U/D, CS
+DigiPot PotMid(4,A4,A5); // INC, U/D, CS
+DigiPot PotTreble(5,A6,A7); // INC, U/D, CS
+LiquidCrystal pantalla(44,45,42,43,40,41); // Connection: RS,E,D4,D5,D6,D7 
+RF24 myAmp (48, 49); // Connection: (CE,CSN) SCK->52, MOSI->51, MISO->50
 byte addresses[][6] = {"0"}; 
 
 int Li = 16;
@@ -16,19 +16,18 @@ int Lii = 0;
 int mode = 0;
 
 
-int analogTripler = A10;
-int analogMilieu = A9;
-int analogBas = A8;
+int analogTreble = A10;
+int analogMid = A9;
+int analogBass = A8;
 int analogVolume = A11;
 
 struct package
 {
   int id=0;
   int volume = 0;
-  int tripler = 0;
-  int milieu = 0;
-  int bas = 0;
-  char  text[100] ="empty";
+  int treble = 0;
+  int mid = 0;
+  int bass = 0;
 };
 typedef struct package Package;
 Package data;
@@ -83,27 +82,27 @@ void loop()
         pantalla.print(volumen);
         PotVol.set(volumen);
                                 // Organización de lcd para Treble
-        int bajos = map(data.bas,0, 1023, 0, 100);
+        int bajos = map(data.bass,0, 1023, 0, 100);
         pantalla.setCursor(0,1);
         pantalla.print("Ba ");
         pantalla.setCursor(3,1);
         pantalla.print(bajos);
-        PotBas.set(bajos);
+        PotBass.set(bajos);
                                 // Organización de lcd para Middle
-        int medios = map(data.milieu,0, 1023, 0, 100);                       
+        int medios = map(data.mid,0, 1023, 0, 100);                       
         pantalla.setCursor(5,1);
         pantalla.print("Me");
         pantalla.setCursor(8,1);
         pantalla.print(medios);
-        PotMilieu.set(medios);
+        PotMid.set(medios);
     
                                 // Organización de lcd para Bass
-        int agudos = map(data.tripler,0, 1023, 0, 100);   
+        int agudos = map(data.treble,0, 1023, 0, 100);   
         pantalla.setCursor(10,1);
         pantalla.print("Agu");
         pantalla.setCursor(14,1);
         pantalla.print(agudos);
-        PotTripler.set(agudos);
+        PotTreble.set(agudos);
 
        }
     }                          
@@ -131,29 +130,29 @@ void loop()
         pantalla.print(volumen);
         PotVol.set(volumen);
 
-        analogBas = analogRead(A8);    
-        int bajos = map(analogBas,0, 1022, 0, 100);
+        analogBass = analogRead(A8);    
+        int bajos = map(analogBass,0, 1022, 0, 100);
         pantalla.setCursor(0,1);
         pantalla.print("Ba ");
         pantalla.setCursor(3,1);
         pantalla.print(bajos);
-        PotBas.set(bajos);
+        PotBass.set(bajos);
 
-        analogMilieu = analogRead(A9);
-        int medios = map(analogMilieu,0, 1022, 0, 100);                       
+        analogMid = analogRead(A9);
+        int medios = map(analogMid,0, 1022, 0, 100);                       
         pantalla.setCursor(5,1);
         pantalla.print("Me");
         pantalla.setCursor(8,1);
         pantalla.print(medios);
-        PotMilieu.set(medios);
+        PotMid.set(medios);
 
-        analogTripler = analogRead(A10);  
-        int agudos = map(analogTripler,0, 1022, 0, 100);
+        analogTreble = analogRead(A10);  
+        int agudos = map(analogTreble,0, 1022, 0, 100);
         pantalla.setCursor(10,1);
         pantalla.print("Agu");
         pantalla.setCursor(14,1);
         pantalla.print(agudos);
-        PotTripler.set(agudos); 
+        PotTreble.set(agudos); 
         }
     }
     

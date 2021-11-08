@@ -3,10 +3,10 @@
 
 RF24 myControl (7, 8); 
 byte addresses[][6] = {"0"}; 
-int potmeterPin1 = A0;
-int potmeterPin2 = A1;
-int potmeterPin3 = A2;
-int potmeterPin4 = A3;
+int potmeterVol = A0;
+int potmeterTreb = A1;
+int potmeterMid = A2;
+int potmeterBass = A3;
 int volume = 0;
 int treble = 0;
 int mid = 0;
@@ -19,8 +19,6 @@ struct package
   int treble = 0;
   int mid = 0;
   int bass = 0;
-
-  char  text[100] = "Text to be transmitted";
 };
 typedef struct package Package;
 Package data;
@@ -41,10 +39,10 @@ void loop()
 } 
 
 void readPot(){
-  data.volume = analogRead(potmeterPin1); // Lee el dato y el resultado lo manda directo al paquete de envío
-  data.treble = analogRead(potmeterPin2);
-  data.mid = analogRead(potmeterPin3);
-  data.bass = analogRead(potmeterPin4);
+  data.volume = analogRead(potmeterVol); // Lee el dato y el resultado lo manda directo al paquete de envío
+  data.treble = analogRead(potmeterTreb);
+  data.mid = analogRead(potmeterMid);
+  data.bass = analogRead(potmeterBass);
 }
 
 
